@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VistaInicioSesion.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CalifMavenVer</a> &gt; <a href="index.source.html" class="el_package">vista</a> &gt; <span class="el_source">VistaInicioSesion.java</span></div><h1>VistaInicioSesion.java</h1><pre class="source lang-java linenums">package vista;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/**
+ * Representa la interfaz gráfica de usuario para el inicio de sesión.
+ * Proporciona campos para ingresar el nombre de usuario y la contraseña,
+ * así como botones para iniciar sesión o cancelar.
+ */
+public class VistaInicioSesion extends JFrame {
+
+    private JTextField campoUsuario;
+    private JPasswordField campoContrasena;
+    private JButton botonIniciarSesion;
+    private JButton botonCancelar;
+
+    /**
+     * Constructor que inicializa la ventana de inicio de sesión con su diseño y componentes.
+     */
+<span class="nc" id="L23">    public VistaInicioSesion() {</span>
+<span class="nc" id="L24">        setTitle(&quot;Iniciar Sesión&quot;);</span>
+<span class="nc" id="L25">        setSize(400, 250);</span>
+<span class="nc" id="L26">        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L27">        setLocationRelativeTo(null);</span>
+
+<span class="nc" id="L29">        JPanel panel = new JPanel(new GridBagLayout());</span>
+<span class="nc" id="L30">        GridBagConstraints restricciones = new GridBagConstraints();</span>
+<span class="nc" id="L31">        restricciones.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L32">        restricciones.insets = new Insets(10, 10, 10, 10);</span>
+
+        // Etiqueta y campo de texto para el usuario
+<span class="nc" id="L35">        JLabel etiquetaUsuario = new JLabel(&quot;Usuario:&quot;);</span>
+<span class="nc" id="L36">        etiquetaUsuario.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L37">        restricciones.gridx = 0;</span>
+<span class="nc" id="L38">        restricciones.gridy = 0;</span>
+<span class="nc" id="L39">        panel.add(etiquetaUsuario, restricciones);</span>
+
+<span class="nc" id="L41">        campoUsuario = new JTextField(20);</span>
+<span class="nc" id="L42">        campoUsuario.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L43">        restricciones.gridx = 1;</span>
+<span class="nc" id="L44">        restricciones.gridy = 0;</span>
+<span class="nc" id="L45">        panel.add(campoUsuario, restricciones);</span>
+<span class="nc" id="L46">        campoUsuario.setPreferredSize(new Dimension(250, 30));</span>
+
+        // Etiqueta y campo de texto para la contraseña
+<span class="nc" id="L49">        JLabel etiquetaContrasena = new JLabel(&quot;Contraseña:&quot;);</span>
+<span class="nc" id="L50">        etiquetaContrasena.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L51">        restricciones.gridx = 0;</span>
+<span class="nc" id="L52">        restricciones.gridy = 1;</span>
+<span class="nc" id="L53">        panel.add(etiquetaContrasena, restricciones);</span>
+
+<span class="nc" id="L55">        campoContrasena = new JPasswordField(20);</span>
+<span class="nc" id="L56">        campoContrasena.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L57">        restricciones.gridx = 1;</span>
+<span class="nc" id="L58">        restricciones.gridy = 1;</span>
+<span class="nc" id="L59">        panel.add(campoContrasena, restricciones);</span>
+<span class="nc" id="L60">        campoContrasena.setPreferredSize(new Dimension(250, 30));</span>
+
+        // Panel de botones para iniciar sesión o cancelar
+<span class="nc" id="L63">        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));</span>
+
+<span class="nc" id="L65">        botonIniciarSesion = new JButton(&quot;Iniciar Sesión&quot;);</span>
+<span class="nc" id="L66">        botonIniciarSesion.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L67">        botonIniciarSesion.setPreferredSize(new Dimension(150, 40));</span>
+<span class="nc" id="L68">        panelBotones.add(botonIniciarSesion);</span>
+
+<span class="nc" id="L70">        botonCancelar = new JButton(&quot;Cancelar&quot;);</span>
+<span class="nc" id="L71">        botonCancelar.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));</span>
+<span class="nc" id="L72">        botonCancelar.setPreferredSize(new Dimension(150, 40));</span>
+<span class="nc" id="L73">        panelBotones.add(botonCancelar);</span>
+
+<span class="nc" id="L75">        restricciones.gridx = 0;</span>
+<span class="nc" id="L76">        restricciones.gridy = 2;</span>
+<span class="nc" id="L77">        restricciones.gridwidth = 2;</span>
+<span class="nc" id="L78">        restricciones.fill = GridBagConstraints.NONE;</span>
+<span class="nc" id="L79">        restricciones.anchor = GridBagConstraints.CENTER;</span>
+<span class="nc" id="L80">        panel.add(panelBotones, restricciones);</span>
+
+        // Acción para el botón de cancelar
+<span class="nc" id="L83">        botonCancelar.addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L86">                System.exit(0);</span>
+<span class="nc" id="L87">            }</span>
+        });
+
+<span class="nc" id="L90">        add(panel);</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Registra un ActionListener para el botón de iniciar sesión.
+     *
+     * @param listener el ActionListener que se ejecutará al presionar el botón.
+     */
+    public void escucaharIniciarSesion(ActionListener listener) {
+<span class="nc" id="L99">        botonIniciarSesion.addActionListener(listener);</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Obtiene el nombre de usuario ingresado en el campo de texto.
+     *
+     * @return el nombre de usuario como una cadena de texto.
+     */
+    public String obtenerNombreUsuario() {
+<span class="nc" id="L108">        return campoUsuario.getText();</span>
+    }
+
+    /**
+     * Obtiene la contraseña ingresada en el campo de contraseña.
+     *
+     * @return la contraseña como una cadena de texto.
+     */
+    public String obtenerContrasena() {
+<span class="nc" id="L117">        return new String(campoContrasena.getPassword());</span>
+    }
+
+    /**
+     * Método principal para ejecutar la ventana de inicio de sesión de forma independiente.
+     *
+     * @param args argumentos de la línea de comandos (no utilizados).
+     */
+    public static void main(String[] args) {
+<span class="nc" id="L126">        SwingUtilities.invokeLater(new Runnable() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L129">                VistaInicioSesion interfaz = new VistaInicioSesion();</span>
+<span class="nc" id="L130">                interfaz.setVisible(true);</span>
+<span class="nc" id="L131">            }</span>
+        });
+<span class="nc" id="L133">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

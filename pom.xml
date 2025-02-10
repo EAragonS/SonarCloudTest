@@ -34,21 +34,33 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
                 <executions>
+                    <!-- Activa el agente de JaCoCo -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                    <!-- Genera el reporte en HTML y XML en la fase verify -->
                     <execution>
                         <id>report</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
+                            <outputFormats>
+                                <outputFormat>xml</outputFormat>
+                                <outputFormat>html</outputFormat>
+                            </outputFormats>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+
+
 
             <!-- Plugin de Sonar para leer el reporte de cobertura -->
             <plugin>

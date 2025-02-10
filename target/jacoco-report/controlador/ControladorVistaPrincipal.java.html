@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControladorVistaPrincipal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CalifMavenVer</a> &gt; <a href="index.source.html" class="el_package">controlador</a> &gt; <span class="el_source">ControladorVistaPrincipal.java</span></div><h1>ControladorVistaPrincipal.java</h1><pre class="source lang-java linenums">package controlador;
+
+import modelo.Alumno;
+import modelo.Calificacion;
+import modelo.GestionAlumnos;
+import vista.VistaPrincipal;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+/**
+ * Controlador para manejar la interacción entre la vista principal y el modelo de gestión de alumnos.
+ */
+public class ControladorVistaPrincipal {
+    private GestionAlumnos gestionAlumnos;
+    private VistaPrincipal vista;
+    private Alumno alumnoSeleccionado;
+
+    /**
+     * Constructor que inicializa el controlador con la vista principal.
+     * @param vista la vista principal de la aplicación.
+     */
+<span class="nc" id="L35">    public ControladorVistaPrincipal(VistaPrincipal vista) {</span>
+<span class="nc" id="L36">        this.gestionAlumnos = new GestionAlumnos();</span>
+<span class="nc" id="L37">        this.vista = vista;</span>
+<span class="nc" id="L38">        this.alumnoSeleccionado = null;</span>
+<span class="nc" id="L39">        configurarListeners();</span>
+<span class="nc" id="L40">    }</span>
+
+    // ==========================
+    // Configuración de Listeners
+    // ==========================
+
+    /**
+     * Configura los listeners para los botones y componentes de la vista principal.
+     */
+    private void configurarListeners() {
+<span class="nc" id="L50">        vista.getBotonAgregarAlumno().addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L53">                agregarAlumno();</span>
+<span class="nc" id="L54">            }</span>
+        });
+
+<span class="nc" id="L57">        vista.getBotonEliminarAlumno().addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L60">                eliminarAlumnoSeleccionado();</span>
+<span class="nc" id="L61">            }</span>
+        });
+
+<span class="nc" id="L64">        vista.getTablaAlumnos().getSelectionModel().addListSelectionListener(new ListSelectionListener() {</span>
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                if (!e.getValueIsAdjusting()) {</span>
+<span class="nc" id="L68">                    seleccionarAlumno();</span>
+                }
+<span class="nc" id="L70">            }</span>
+        });
+
+<span class="nc" id="L73">        vista.getBotonCargarArchivo().addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L76">                cargarArchivoAlumnos();</span>
+<span class="nc" id="L77">            }</span>
+        });
+
+<span class="nc" id="L80">        vista.getBotonGuardarListaAlumnos().addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L83">                guardarArchivoAlumnos();</span>
+<span class="nc" id="L84">            }</span>
+        });
+
+<span class="nc" id="L87">        vista.getBotonCrearPDF().addActionListener(new ActionListener() {</span>
+            @Override
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L90">                crearPDF();</span>
+<span class="nc" id="L91">            }</span>
+        });
+<span class="nc" id="L93">    }</span>
+
+    // ==========================
+    // Métodos principales
+    // ==========================
+
+    /**
+     * Agrega un alumno a la lista gestionada.
+     */
+    private void agregarAlumno() {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (camposEstanVacios()) {</span>
+<span class="nc" id="L104">            mostrarMensaje(&quot;Todos los campos deben estar llenos para registrar al alumno&quot;, &quot;Campos vacíos&quot;, JOptionPane.WARNING_MESSAGE);</span>
+<span class="nc" id="L105">            return;</span>
+        }
+
+<span class="nc" id="L108">        String matricula = vista.getCampoMatricula().getText();</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (!GestionAlumnos.esMatriculaValida(matricula)) {</span>
+<span class="nc" id="L110">            mostrarMensaje(&quot;La matrícula debe contener constar de solamente 8 dígitos&quot;, &quot;Error de validación&quot;, JOptionPane.ERROR_MESSAGE);</span>
+<span class="nc" id="L111">            return;</span>
+        }
+
+<span class="nc" id="L114">        String apellidoPaterno = vista.getCampoApellidoPaterno().getText();</span>
+<span class="nc" id="L115">        String apellidoMaterno = vista.getCampoApellidoMaterno().getText();</span>
+<span class="nc" id="L116">        String nombre = vista.getCampoNombre().getText();</span>
+<span class="nc" id="L117">        String asignatura = (String) vista.getCampoAsignatura().getSelectedItem();</span>
+<span class="nc" id="L118">        int calificacion = (int) vista.getCampoCalificacion().getValue();</span>
+
+<span class="nc" id="L120">        Alumno alumno = new Alumno(matricula, apellidoPaterno, apellidoMaterno, nombre);</span>
+<span class="nc" id="L121">        alumno.agregarCalificacion(new Calificacion(asignatura, calificacion));</span>
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (gestionAlumnos.agregarAlumno(alumno)) {</span>
+<span class="nc" id="L124">            actualizarVistaConAlumnos(gestionAlumnos.getListaAlumnos());</span>
+<span class="nc" id="L125">            limpiarCampos();</span>
+<span class="nc" id="L126">            alumnoSeleccionado = null;</span>
+<span class="nc" id="L127">        } else {</span>
+<span class="nc" id="L128">            mostrarMensaje(&quot;Ya existe un alumno con la misma matrícula y asignatura&quot;, &quot;Error de duplicado&quot;, JOptionPane.ERROR_MESSAGE);</span>
+        }
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * Selecciona un alumno de la tabla y actualiza los campos de la vista con sus datos.
+     */
+    private void seleccionarAlumno() {
+<span class="nc" id="L136">        int filaSeleccionada = vista.getTablaAlumnos().getSelectedRow();</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (filaSeleccionada != -1) {</span>
+<span class="nc" id="L138">            DefaultTableModel modelo = (DefaultTableModel) vista.getTablaAlumnos().getModel();</span>
+<span class="nc" id="L139">            String matricula = (String) modelo.getValueAt(filaSeleccionada, 0);</span>
+<span class="nc" id="L140">            String apellidoPaterno = (String) modelo.getValueAt(filaSeleccionada, 1);</span>
+<span class="nc" id="L141">            String apellidoMaterno = (String) modelo.getValueAt(filaSeleccionada, 2);</span>
+<span class="nc" id="L142">            String nombre = (String) modelo.getValueAt(filaSeleccionada, 3);</span>
+<span class="nc" id="L143">            String asignatura = (String) modelo.getValueAt(filaSeleccionada, 4);</span>
+<span class="nc" id="L144">            int calificacion = (int) modelo.getValueAt(filaSeleccionada, 5);</span>
+
+<span class="nc" id="L146">            vista.getCampoMatricula().setText(matricula);</span>
+<span class="nc" id="L147">            vista.getCampoApellidoPaterno().setText(apellidoPaterno);</span>
+<span class="nc" id="L148">            vista.getCampoApellidoMaterno().setText(apellidoMaterno);</span>
+<span class="nc" id="L149">            vista.getCampoNombre().setText(nombre);</span>
+<span class="nc" id="L150">            vista.getCampoAsignatura().setSelectedItem(asignatura);</span>
+<span class="nc" id="L151">            vista.getCampoCalificacion().setValue(calificacion);</span>
+
+<span class="nc" id="L153">            alumnoSeleccionado = gestionAlumnos.buscarAlumno(matricula, asignatura);</span>
+        }
+<span class="nc" id="L155">    }</span>
+
+    /**
+     * Elimina al alumno seleccionado de la lista gestionada.
+     */
+    private void eliminarAlumnoSeleccionado() {
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (alumnoSeleccionado != null) {</span>
+<span class="nc" id="L162">            int opcion = JOptionPane.showConfirmDialog(vista,</span>
+<span class="nc" id="L163">                &quot;¿Desea eliminar al alumno con matrícula &quot; + alumnoSeleccionado.getMatricula() + </span>
+<span class="nc" id="L164">                &quot;?&quot;, &quot;Confirmar eliminación&quot;, JOptionPane.YES_NO_OPTION);</span>
+
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (opcion == JOptionPane.YES_OPTION) {</span>
+<span class="nc" id="L167">                gestionAlumnos.eliminarAlumno(alumnoSeleccionado);</span>
+<span class="nc" id="L168">                actualizarVistaConAlumnos(gestionAlumnos.getListaAlumnos());</span>
+<span class="nc" id="L169">                limpiarCampos();</span>
+<span class="nc" id="L170">                alumnoSeleccionado = null;</span>
+            }
+<span class="nc" id="L172">        } else {</span>
+<span class="nc" id="L173">            mostrarMensaje(&quot;No hay ningún alumno seleccionado para eliminar&quot;, &quot;Ningún alumno seleccionado&quot;, JOptionPane.WARNING_MESSAGE);</span>
+        }
+<span class="nc" id="L175">    }</span>
+
+    /**
+     * Actualiza la tabla de la vista principal con la lista de alumnos.
+     * @param alumnos lista de alumnos a mostrar.
+     */
+    private void actualizarVistaConAlumnos(List&lt;Alumno&gt; alumnos) {
+<span class="nc" id="L182">        String[] encabezados = {&quot;Matrícula&quot;, &quot;Apellido Paterno&quot;, &quot;Apellido Materno&quot;, &quot;Nombre&quot;, &quot;Asignatura&quot;, &quot;Calificación&quot;};</span>
+<span class="nc" id="L183">        DefaultTableModel modeloTabla = new DefaultTableModel(encabezados, 0);</span>
+
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        for (Alumno alumno : alumnos) {</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            for (Calificacion calificacion : alumno.getCalificaciones()) {</span>
+<span class="nc" id="L187">                modeloTabla.addRow(new Object[]{</span>
+<span class="nc" id="L188">                    alumno.getMatricula(),</span>
+<span class="nc" id="L189">                    alumno.getApellidoPaterno(),</span>
+<span class="nc" id="L190">                    alumno.getApellidoMaterno(),</span>
+<span class="nc" id="L191">                    alumno.getNombre(),</span>
+<span class="nc" id="L192">                    calificacion.getAsignatura(),</span>
+<span class="nc" id="L193">                    calificacion.getCalificacion()</span>
+                });
+            }
+        }
+
+<span class="nc" id="L198">        vista.getTablaAlumnos().setModel(modeloTabla);</span>
+<span class="nc" id="L199">    }</span>
+
+    // ==========================
+    // Operaciones de Archivos
+    // ==========================
+
+    /**
+     * Carga un archivo CSV de alumnos y actualiza la vista con los datos cargados.
+     */
+    public void cargarArchivoAlumnos() {
+<span class="nc" id="L209">        JFileChooser fileChooser = new JFileChooser();</span>
+<span class="nc" id="L210">        fileChooser.setFileFilter(new FileNameExtensionFilter(&quot;Archivos CSV&quot;, &quot;csv&quot;));</span>
+<span class="nc" id="L211">        int seleccion = fileChooser.showOpenDialog(vista);</span>
+
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (seleccion == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L214">            File archivoSeleccionado = fileChooser.getSelectedFile();</span>
+<span class="nc" id="L215">            List&lt;Alumno&gt; alumnos = gestionAlumnos.cargarArchivo(archivoSeleccionado.getAbsolutePath());</span>
+<span class="nc" id="L216">            actualizarVistaConAlumnos(alumnos);</span>
+        }
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * Guarda la lista de alumnos en un archivo CSV.
+     */
+    public void guardarArchivoAlumnos() {
+<span class="nc" id="L224">        JFileChooser fileChooser = new JFileChooser();</span>
+<span class="nc" id="L225">        fileChooser.setFileFilter(new FileNameExtensionFilter(&quot;Archivos CSV&quot;, &quot;csv&quot;));</span>
+<span class="nc" id="L226">        fileChooser.setSelectedFile(new File(&quot;alumnos.csv&quot;));</span>
+
+<span class="nc" id="L228">        int seleccion = fileChooser.showSaveDialog(vista);</span>
+
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        if (seleccion == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L231">            File archivoSeleccionado = fileChooser.getSelectedFile();</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            if (!archivoSeleccionado.getAbsolutePath().toLowerCase().endsWith(&quot;.csv&quot;)) {</span>
+<span class="nc" id="L233">                archivoSeleccionado = new File(archivoSeleccionado.getAbsolutePath() + &quot;.csv&quot;);</span>
+            }
+<span class="nc" id="L235">            gestionAlumnos.guardarListaDeAlumnos(archivoSeleccionado.getAbsolutePath());</span>
+<span class="nc" id="L236">            mostrarMensaje(&quot;Archivo guardado satisfactoriamente&quot;, &quot;Éxito&quot;, JOptionPane.INFORMATION_MESSAGE);</span>
+        }
+<span class="nc" id="L238">    }</span>
+
+    /**
+     * Crea un archivo PDF con la lista de alumnos.
+     */
+    private void crearPDF() {
+<span class="nc" id="L244">        JFileChooser fileChooser = new JFileChooser();</span>
+<span class="nc" id="L245">        fileChooser.setDialogTitle(&quot;Guardar PDF&quot;);</span>
+<span class="nc" id="L246">        fileChooser.setFileFilter(new FileNameExtensionFilter(&quot;Archivos PDF&quot;, &quot;pdf&quot;));</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        if (fileChooser.showSaveDialog(vista) == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L248">            File archivoSeleccionado = fileChooser.getSelectedFile();</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">            if (!archivoSeleccionado.getAbsolutePath().toLowerCase().endsWith(&quot;.pdf&quot;)) {</span>
+<span class="nc" id="L250">                archivoSeleccionado = new File(archivoSeleccionado.getAbsolutePath() + &quot;.pdf&quot;);</span>
+            }
+
+            try {
+<span class="nc" id="L254">                Document documento = new Document();</span>
+<span class="nc" id="L255">                PdfWriter.getInstance(documento, new FileOutputStream(archivoSeleccionado));</span>
+<span class="nc" id="L256">                documento.open();</span>
+
+<span class="nc" id="L258">                documento.add(new Paragraph(&quot;Lista de Alumnos&quot;, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, Font.BOLD)));</span>
+<span class="nc" id="L259">                documento.add(new Paragraph(&quot; &quot;));</span>
+                
+<span class="nc" id="L261">                PdfPTable tabla = new PdfPTable(6);</span>
+<span class="nc" id="L262">                tabla.addCell(&quot;Matrícula&quot;);</span>
+<span class="nc" id="L263">                tabla.addCell(&quot;Apellido Paterno&quot;);</span>
+<span class="nc" id="L264">                tabla.addCell(&quot;Apellido Materno&quot;);</span>
+<span class="nc" id="L265">                tabla.addCell(&quot;Nombre&quot;);</span>
+<span class="nc" id="L266">                tabla.addCell(&quot;Asignatura&quot;);</span>
+<span class="nc" id="L267">                tabla.addCell(&quot;Calificación&quot;);</span>
+
+<span class="nc bnc" id="L269" title="All 2 branches missed.">                for (Alumno alumno : gestionAlumnos.getListaAlumnos()) {</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">                    for (Calificacion calificacion : alumno.getCalificaciones()) {</span>
+<span class="nc" id="L271">                        tabla.addCell(alumno.getMatricula());</span>
+<span class="nc" id="L272">                        tabla.addCell(alumno.getApellidoPaterno());</span>
+<span class="nc" id="L273">                        tabla.addCell(alumno.getApellidoMaterno());</span>
+<span class="nc" id="L274">                        tabla.addCell(alumno.getNombre());</span>
+<span class="nc" id="L275">                        tabla.addCell(calificacion.getAsignatura());</span>
+<span class="nc" id="L276">                        tabla.addCell(String.valueOf(calificacion.getCalificacion()));</span>
+                    }
+                }
+
+<span class="nc" id="L280">                documento.add(tabla);</span>
+<span class="nc" id="L281">                documento.close();</span>
+<span class="nc" id="L282">                mostrarMensaje(&quot;Archivo PDF creado satisfactoriamente&quot;, &quot;Éxito&quot;, JOptionPane.INFORMATION_MESSAGE);</span>
+<span class="nc" id="L283">            } catch (Exception ex) {</span>
+<span class="nc" id="L284">                mostrarMensaje(&quot;Error al crear el archivo PDF: &quot; + ex.getMessage(), &quot;Error&quot;, JOptionPane.ERROR_MESSAGE);</span>
+            }
+        }
+<span class="nc" id="L287">    }</span>
+
+    // ==========================
+    // Utilidades
+    // ==========================
+
+    /**
+     * Limpia los campos de texto y resetea los valores en la vista.
+     */
+    private void limpiarCampos() {
+<span class="nc" id="L297">        vista.getCampoMatricula().setText(&quot;&quot;);</span>
+<span class="nc" id="L298">        vista.getCampoApellidoPaterno().setText(&quot;&quot;);</span>
+<span class="nc" id="L299">        vista.getCampoApellidoMaterno().setText(&quot;&quot;);</span>
+<span class="nc" id="L300">        vista.getCampoNombre().setText(&quot;&quot;);</span>
+<span class="nc" id="L301">        vista.getCampoAsignatura().setSelectedIndex(0);</span>
+<span class="nc" id="L302">        vista.getCampoCalificacion().setValue(0);</span>
+<span class="nc" id="L303">    }</span>
+
+    /**
+     * Muestra un mensaje en un cuadro de diálogo.
+     * @param mensaje el texto a mostrar.
+     * @param titulo el título de la ventana.
+     * @param tipoMensaje el tipo de mensaje (INFORMATION_MESSAGE, WARNING_MESSAGE, ERROR_MESSAGE).
+     */
+    private void mostrarMensaje(String mensaje, String titulo, int tipoMensaje) {
+<span class="nc" id="L312">        JOptionPane.showMessageDialog(vista, mensaje, titulo, tipoMensaje);</span>
+<span class="nc" id="L313">    }</span>
+
+    /**
+     * Verifica si los campos están vacíos.
+     * @return true si algún campo está vacío, false en caso contrario.
+     */
+    private boolean camposEstanVacios() {
+<span class="nc bnc" id="L320" title="All 2 branches missed.">        return vista.getCampoMatricula().getText().isEmpty() ||</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">               vista.getCampoApellidoPaterno().getText().isEmpty() ||</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">               vista.getCampoApellidoMaterno().getText().isEmpty() ||</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">               vista.getCampoNombre().getText().isEmpty();</span>
+    }
+
+    /**
+     * Valida si ya existe un alumno con la misma matrícula y asignatura.
+     * @param matricula la matrícula a verificar.
+     * @param asignatura la asignatura a verificar.
+     * @return true si hay un duplicado, false en caso contrario.
+     */
+    private boolean validarDuplicado(String matricula, String asignatura) {
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (gestionAlumnos.existeAlumnoConMatriculaYAsignatura(matricula, asignatura)) {</span>
+<span class="nc" id="L334">            mostrarMensaje(&quot;Ya existe un alumno con la misma matrícula y asignatura&quot;, &quot;Duplicado encontrado&quot;, JOptionPane.WARNING_MESSAGE);</span>
+<span class="nc" id="L335">            return true;</span>
+        }
+<span class="nc" id="L337">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
