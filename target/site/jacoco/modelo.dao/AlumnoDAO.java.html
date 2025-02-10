@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AlumnoDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CalifMavenVer</a> &gt; <a href="index.source.html" class="el_package">modelo.dao</a> &gt; <span class="el_source">AlumnoDAO.java</span></div><h1>AlumnoDAO.java</h1><pre class="source lang-java linenums">package modelo.dao;
+
+import modelo.Alumno;
+import modelo.Calificacion;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Clase encargada de gestionar el acceso a datos de los alumnos.
+ */
+public class AlumnoDAO {
+
+    private List&lt;Alumno&gt; listaAlumnos;
+
+    /**
+     * Constructor que inicializa la lista de alumnos.
+     */
+<span class="fc" id="L20">    public AlumnoDAO() {</span>
+<span class="fc" id="L21">        this.listaAlumnos = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * Carga alumnos desde un archivo CSV y los devuelve como una lista.
+     *
+     * @param rutaArchivo Ruta del archivo de entrada.
+     * @return Lista de alumnos cargados.
+     */
+    public List&lt;Alumno&gt; cargarAlumnos(String rutaArchivo) {
+<span class="nc" id="L31">        List&lt;Alumno&gt; alumnosCargados = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L32">        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {</span>
+            String linea;
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            while ((linea = br.readLine()) != null) {</span>
+<span class="nc" id="L35">                String[] datos = linea.split(&quot;;&quot;);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                if (datos.length &gt;= 4) { // Validar que al menos están los datos del alumno</span>
+<span class="nc" id="L37">                    String matricula = datos[0];</span>
+<span class="nc" id="L38">                    String apellidoPaterno = datos[1];</span>
+<span class="nc" id="L39">                    String apellidoMaterno = datos[2];</span>
+<span class="nc" id="L40">                    String nombre = datos[3];</span>
+
+                    // Crear el alumno
+<span class="nc" id="L43">                    Alumno alumno = new Alumno(matricula, apellidoPaterno, apellidoMaterno, nombre);</span>
+
+                    // Cargar calificaciones asociadas (si existen)
+<span class="nc bnc" id="L46" title="All 2 branches missed.">                    for (int i = 4; i &lt; datos.length; i++) {</span>
+<span class="nc" id="L47">                        String[] calificacionDatos = datos[i].split(&quot;,&quot;);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                        if (calificacionDatos.length == 2) {</span>
+<span class="nc" id="L49">                            String asignatura = calificacionDatos[0];</span>
+<span class="nc" id="L50">                            int calificacion = Integer.parseInt(calificacionDatos[1]);</span>
+<span class="nc" id="L51">                            alumno.agregarCalificacion(new Calificacion(asignatura, calificacion));</span>
+                        }
+                    }
+
+<span class="nc" id="L55">                    alumnosCargados.add(alumno);</span>
+                }
+            }
+<span class="nc" id="L58">            listaAlumnos = alumnosCargados; // Actualizar la lista interna</span>
+<span class="nc" id="L59">            System.out.println(&quot;Alumnos cargados exitosamente desde: &quot; + rutaArchivo);</span>
+<span class="nc" id="L60">        } catch (IOException | NumberFormatException e) {</span>
+<span class="nc" id="L61">            System.err.println(&quot;Error al cargar alumnos: &quot; + e.getMessage());</span>
+        }
+<span class="nc" id="L63">        return alumnosCargados; // Devolver la lista cargada</span>
+    }
+
+    /**
+     * Exporta los alumnos a un archivo CSV.
+     *
+     * @param rutaArchivo Ruta del archivo de salida.
+     */
+    public void exportarAlumnos(String rutaArchivo) {
+<span class="nc" id="L72">        try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaArchivo))) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            for (Alumno alumno : listaAlumnos) {</span>
+<span class="nc" id="L74">                StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L75">                sb.append(alumno.getMatricula()).append(&quot;;&quot;);</span>
+<span class="nc" id="L76">                sb.append(alumno.getApellidoPaterno()).append(&quot;;&quot;);</span>
+<span class="nc" id="L77">                sb.append(alumno.getApellidoMaterno()).append(&quot;;&quot;);</span>
+<span class="nc" id="L78">                sb.append(alumno.getNombre());</span>
+
+                // Agregar calificaciones
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                for (Calificacion calificacion : alumno.getCalificaciones()) {</span>
+<span class="nc" id="L82">                    sb.append(&quot;;&quot;).append(calificacion.getAsignatura()).append(&quot;,&quot;).append(calificacion.getCalificacion());</span>
+                }
+
+<span class="nc" id="L85">                bw.write(sb.toString());</span>
+<span class="nc" id="L86">                bw.newLine();</span>
+            }
+<span class="nc" id="L88">            System.out.println(&quot;Alumnos exportados exitosamente a: &quot; + rutaArchivo);</span>
+<span class="nc" id="L89">        } catch (IOException e) {</span>
+<span class="nc" id="L90">            System.err.println(&quot;Error al exportar alumnos: &quot; + e.getMessage());</span>
+        }
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Devuelve la lista interna de alumnos.
+     *
+     * @return Lista de alumnos.
+     */
+    public List&lt;Alumno&gt; getListaAlumnos() {
+<span class="fc" id="L100">        return listaAlumnos;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
