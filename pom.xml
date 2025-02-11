@@ -10,6 +10,8 @@
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
         <exec.mainClass>com.mycompany.califmavenver.CalifMavenVer</exec.mainClass>
+        <sonar.organization>earagons</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
