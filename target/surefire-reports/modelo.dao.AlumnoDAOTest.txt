@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: modelo.dao.AlumnoDAOTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.049 s - in modelo.dao.AlumnoDAOTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s - in modelo.dao.AlumnoDAOTest

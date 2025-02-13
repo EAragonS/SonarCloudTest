@@ -1,3 +1,8 @@
-modelo/dao/AlumnoDAOTest.class
+modelo/CalificacionTest.class
+modelo/UsuarioTest.class
+modelo/AlumnoTest.class
+controlador/ControladorVistaPrincipalTest.class
 modelo/dao/UsuarioDAOTest.class
 modelo/GestionAlumnosTest.class
+controlador/ControladorInicioSesionTest.class
+modelo/dao/AlumnoDAOTest.class

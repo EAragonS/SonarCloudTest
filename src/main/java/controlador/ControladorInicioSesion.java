@@ -70,7 +70,7 @@ public class ControladorInicioSesion {
      * @param contrasena contraseña del usuario.
      * @return true si las credenciales son correctas, false de lo contrario.
      */
-    private boolean autenticarUsuario(String nombreUsuario, String contrasena) {
+    boolean autenticarUsuario(String nombreUsuario, String contrasena) {
         return modeloUsuario.validarContrasena(nombreUsuario, contrasena);
     }
 }
