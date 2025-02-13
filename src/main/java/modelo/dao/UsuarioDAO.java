@@ -29,6 +29,11 @@ public class UsuarioDAO {
         }
         return null;
     }
+    
+    public List<Usuario> getListaUsuarios() {
+    return listaUsuarios;
+}
+
 
     /**
      * Carga usuarios desde un archivo CSV.

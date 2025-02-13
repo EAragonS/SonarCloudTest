@@ -101,4 +101,47 @@ public class GestionAlumnosTest {
         assertFalse(GestionAlumnos.esMatriculaValida("1Prueba2")); // Contiene valores alfanuméricos
         assertFalse(GestionAlumnos.esMatriculaValida("qwertyui")); // Contiene exactamente 8 carácteres no numéricos
     }
+    
+    @Test
+    public void testAgregarAlumnoDiferenteAsignatura() {
+        // Caso: Agregar un alumno con la misma matrícula pero distinta asignatura
+        Alumno alumno = new Alumno("12345678", "Pérez", "García", "Juan");
+        alumno.agregarCalificacion(new Calificacion("Matemáticas", 85));
+        gestionAlumnos.agregarAlumno(alumno);
+
+        Alumno alumnoDiferenteAsignatura = new Alumno("12345678", "Pérez", "García", "Juan");
+        alumnoDiferenteAsignatura.agregarCalificacion(new Calificacion("Física", 90));
+
+        boolean agregado = gestionAlumnos.agregarAlumno(alumnoDiferenteAsignatura);
+
+        assertTrue(agregado);
+        assertEquals(1, gestionAlumnos.getListaAlumnos().size()); // Misma matrícula, pero nueva asignatura
+        assertEquals(2, gestionAlumnos.getListaAlumnos().get(0).getCalificaciones().size()); // Debe tener dos asignaturas
+    }
+
+    @Test
+    public void testEliminarAlumnoConVariasCalificaciones() {
+        Alumno alumno = new Alumno("12345678", "Pérez", "García", "Juan");
+        alumno.agregarCalificacion(new Calificacion("Matemáticas", 85));
+        alumno.agregarCalificacion(new Calificacion("Física", 90));
+        gestionAlumnos.agregarAlumno(alumno);
+
+        gestionAlumnos.eliminarAlumno(alumno);
+
+        assertEquals(0, gestionAlumnos.getListaAlumnos().size());
+        assertFalse(gestionAlumnos.getListaAlumnos().contains(alumno));
+    }
+
+    @Test
+    public void testBuscarAlumnoConMultiplesAsignaturas() {
+        Alumno alumno = new Alumno("12345678", "Pérez", "García", "Juan");
+        alumno.agregarCalificacion(new Calificacion("Matemáticas", 85));
+        alumno.agregarCalificacion(new Calificacion("Física", 90));
+        gestionAlumnos.agregarAlumno(alumno);
+
+        Alumno encontrado = gestionAlumnos.buscarAlumno("12345678", "Física");
+        assertNotNull(encontrado);
+        assertEquals("12345678", encontrado.getMatricula());
+    }
+
 }
